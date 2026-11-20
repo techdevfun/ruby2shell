@@ -1,0 +1,12 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rack (3.0.8)
+    sinatra (4.1.0)
+      rack (>= 3.0.0)
+
+PLATFORMS
+  x86_64-linux
+
+DEPENDENCIES
+  sinatra (= 4.1.0)

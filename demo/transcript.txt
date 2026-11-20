@@ -1,0 +1,106 @@
+# ruby2shell demo - real CLI output on fixture Ruby installs
+# (fake ruby binaries print fixture -v outputs from examples/;
+#  the 3.4.12 -v text is RECORDED from the real Ruby built
+#  from source on this machine, 20/11/2026; the 3.4.13 /
+#  3.2.0 texts are representative format; the fleet below
+#  is synthetic, the Rails app is a synthetic fixture)
+
+$ ruby2shell scan --dirs ruby-3412 ruby-3413 ruby-320 --app app-rails --no-system
+ruby2shell 0.1.0 - CVE-2026-132825 (GHSA-34m4-m9fh-gqp5), facts checked 2026-11-20
+
+install                      ruby      framework          verdict 
+------------------------------------------------------------------------
+ruby-3412                    3.4.12    rails              EXPOSED 
+  - 3.4.12 is in the affected range for CVE-2026-132825 (fixed build is 3.4.13)
+  - Rails 7.1.3 (default config) - pre-auth reachable via Rack::MethodOverride
+  - Rack::MethodOverride calls .upcase on the attacker-controlled _method parameter with no authentication
+  - app code also case-converts request params (REVIEW): app/controllers/search_controller.rb:3
+ruby-3413                    3.4.13    rails              SAFE    
+  - 3.4.13 is at or above the fixed build 3.4.13 (18/11/2026 release)
+ruby-320                     3.2.0     rails              AT-RISK 
+  - 3.2.0 is end of life (3.2 and earlier) - the flaw is present back to 2.4.0 and no fix exists for this line
+  - there is no patch for this line - upgrade to a supported Ruby (3.3.14, 3.4.13 or 4.0.10)
+
+summary: EXPOSED 1 / AT-RISK 1 / SAFE 1 / UNKNOWN 0 - 3 install(s) scanned
+Exposure conditions only. This tool does not prove exploitability and never sends a crashing payload. A SAFE verdict means these three conditions do not line up - not that the host is safe from every Ruby flaw.
+exit: 1
+
+$ ruby2shell check ruby-3412 --app app-rails
+ruby2shell 0.1.0 - CVE-2026-132825 (GHSA-34m4-m9fh-gqp5), facts checked 2026-11-20
+
+ruby: ruby 3.4.12 (2026-10-23 revision 366f5fdc00) +PRISM [x86_64-linux]
+binary: /tmp/ruby2shell-demo/fleet/ruby-3412/bin/ruby
+line: 3.4
+patch verdict: affected
+framework: rails
+reachability: Rails 7.1.3 (default config) - pre-auth reachable via Rack::MethodOverride
+app evidence: /tmp/ruby2shell-demo/app-rails
+verdict: EXPOSED
+deciding condition: affected version + exposed framework
+  - 3.4.12 is in the affected range for CVE-2026-132825 (fixed build is 3.4.13)
+  - Rails 7.1.3 (default config) - pre-auth reachable via Rack::MethodOverride
+  - Rack::MethodOverride calls .upcase on the attacker-controlled _method parameter with no authentication
+  - app code also case-converts request params (REVIEW): app/controllers/search_controller.rb:3
+
+Exposure conditions only. This tool does not prove exploitability and never sends a crashing payload. A SAFE verdict means these three conditions do not line up - not that the host is safe from every Ruby flaw.
+exit: 1
+
+$ ruby2shell config-scan app-rails
+ruby2shell 0.1.0 - app config scan, facts checked 2026-11-20
+
+app: /tmp/ruby2shell-demo/app-rails
+framework: rails
+summary: Rails 7.1.3 (default config) - pre-auth reachable via Rack::MethodOverride
+rails: 7.1.3
+rack: 3.0.8
+rack methodoverride: framework-default
+.ruby-version: 3.4.12
+case-conversion on request params (REVIEW, not proof):
+  app/controllers/search_controller.rb:3: query = params[:q].upcase
+evidence: /tmp/ruby2shell-demo/app-rails/Gemfile.lock, /tmp/ruby2shell-demo/app-rails/Gemfile, /tmp/ruby2shell-demo/app-rails/config.ru, /tmp/ruby2shell-demo/app-rails/config/application.rb, /tmp/ruby2shell-demo/app-rails/.ruby-version
+
+Exposure conditions only. This tool does not prove exploitability and never sends a crashing payload. A SAFE verdict means these three conditions do not line up - not that the host is safe from every Ruby flaw.
+exit: 1
+
+$ ruby2shell playbook
+ruby2shell playbook - first hour after the 18/11/2026 Ruby2Shell disclosure
+
+1. Upgrade Ruby first - this is a runtime flaw, not a gem
+  Upgrade to the fixed build for your line: 3.3.14, 3.4.13 or 4.0.10 (released 18/11/2026). Updating gems or Rails does not help: the bug is in the interpreter. Rebuild every image from the fixed tags (ruby:4.0.10, ruby:3.4.13, ruby:3.3.14 - official Docker images rebuilt 19/11/2026) and restart every process so the fixed Ruby is the one running.
+
+2. Ruby 3.2 and earlier: there is no patch - upgrade
+  Ruby 3.2 and earlier are end of life and will not receive these fixes, but they carry the same code back to 2.4.0. The only move is upgrading to a supported Ruby (3.3.14, 3.4.13 or 4.0.10). Do not wait for a patch that is not coming.
+
+3. Self-hosted products: install the vendor fixed release
+  GitLab 19.6.1 / 19.5.8 / 19.4.10, Mastodon 4.7.6 (also 4.6.12, 4.5.22, 4.4.29), OpenProject 17.9.8 (also 17.8.3), Discourse base image 2.0.20261119-0203. GitHub Enterprise Server (3.22.5 and earlier) and Chatwoot (4.20.0 and earlier) had no fixed release yet on 20/11/2026 - watch the vendor and treat those installs as exposed. Check with: ruby2shell check --product gitlab --product-version 19.6.0
+
+4. Patch internet-facing Rails and classic Sinatra first
+  Default Rails and classic-style Sinatra are reachable without authentication (Rack::MethodOverride calls .upcase on the _method parameter). Plain Rack and other frameworks are not exposed by default. Patch the internet-facing apps first, then workers and build images.
+
+5. The patch window is days: the PoC lands 25/11/2026
+  Veria Labs will publish a proof of concept demonstrating RCE on stock Rails on 25 November 2026, or later if major vendors have not shipped a fix by then. Ruby is already aware of non-public PoCs that reach RCE in some scenarios. No exploitation in the wild was reported as of 20/11/2026, and the CVE is not in the CISA KEV catalog as of the 2026-11-18 catalog version.
+
+6. Verify the fix
+  Re-run: ruby2shell scan --app <dir> (or ruby2shell check <ruby-dir> --app <dir>) and confirm SAFE on the fixed build. Confirm the running process uses the fixed Ruby (ruby -v in the deployed image), not just the lockfile. Then re-run the other six flaws as a checklist: the same release fixes 7 flaws (see explain siblings).
+
+7. What NOT to do
+  Do not send a crashing sharp-s payload at a live app to 'test' it - that is the exploit path, and this tool never does it. Do not run exploit code from untrusted repositories (PoC repos for this CVE already exist). Do not trust a clean bundle audit: bundler-audit checks gems, not the interpreter, so it cannot see this flaw.
+
+Exposure conditions only. This tool does not prove exploitability and never sends a crashing payload. A SAFE verdict means these three conditions do not line up - not that the host is safe from every Ruby flaw.
+
+# Upgrade the fixture to the fixed Ruby and check again
+$ ruby2shell check ruby-3413 --app app-rails
+ruby2shell 0.1.0 - CVE-2026-132825 (GHSA-34m4-m9fh-gqp5), facts checked 2026-11-20
+
+ruby: ruby 3.4.13p0 (2026-11-18 revision 2222222222222222222222222222222222222222) [x86_64-linux]
+binary: /tmp/ruby2shell-demo/fleet/ruby-3413/bin/ruby
+line: 3.4
+patch verdict: fixed
+framework: rails
+reachability: Rails 7.1.3 (default config) - pre-auth reachable via Rack::MethodOverride
+app evidence: /tmp/ruby2shell-demo/app-rails
+verdict: SAFE
+deciding condition: fixed build
+  - 3.4.13 is at or above the fixed build 3.4.13 (18/11/2026 release)
+
+Exposure conditions only. This tool does not prove exploitability and never sends a crashing payload. A SAFE verdict means these three conditions do not line up - not that the host is safe from every Ruby flaw.
