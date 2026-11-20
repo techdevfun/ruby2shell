@@ -72,7 +72,7 @@ ruby2shell playbook - first hour after the 18/11/2026 Ruby2Shell disclosure
   Ruby 3.2 and earlier are end of life and will not receive these fixes, but they carry the same code back to 2.4.0. The only move is upgrading to a supported Ruby (3.3.14, 3.4.13 or 4.0.10). Do not wait for a patch that is not coming.
 
 3. Self-hosted products: install the vendor fixed release
-  GitLab 19.6.1 / 19.5.8 / 19.4.10, Mastodon 4.7.6 (also 4.6.12, 4.5.22, 4.4.29), OpenProject 17.9.8 (also 17.8.3), Discourse base image 2.0.20261119-0203. GitHub Enterprise Server (3.22.5 and earlier) and Chatwoot (4.20.0 and earlier) had no fixed release yet on 20/11/2026 - watch the vendor and treat those installs as exposed. Check with: ruby2shell check --product gitlab --product-version 19.6.0
+  GitLab 19.6.1 / 19.5.8 / 19.4.10, Mastodon 4.7.6 (also 4.6.12, 4.5.22, 4.4.29), OpenProject 17.9.8 (also 17.8.3), Discourse base image 2.0.20261119-0203. Chatwoot fixed in 4.20.1. GitHub Enterprise Server (3.22.5 and earlier) still had no fixed release yet on 20/11/2026 - watch the vendor and treat those installs as exposed. Check with: ruby2shell check --product gitlab --product-version 19.6.0
 
 4. Patch internet-facing Rails and classic Sinatra first
   Default Rails and classic-style Sinatra are reachable without authentication (Rack::MethodOverride calls .upcase on the _method parameter). Plain Rack and other frameworks are not exposed by default. Patch the internet-facing apps first, then workers and build images.
@@ -92,7 +92,7 @@ Exposure conditions only. This tool does not prove exploitability and never send
 $ ruby2shell check ruby-3413 --app app-rails
 ruby2shell 0.1.0 - CVE-2026-132825 (GHSA-34m4-m9fh-gqp5), facts checked 2026-11-20
 
-ruby: ruby 3.4.13p0 (2026-11-18 revision 2222222222222222222222222222222222222222) [x86_64-linux]
+ruby: ruby 3.4.13p0 (2026-11-18 revision 1247b22fd914e883d345baf420932f40446e4cda) [x86_64-linux]
 binary: /tmp/ruby2shell-demo/fleet/ruby-3413/bin/ruby
 line: 3.4
 patch verdict: fixed
