@@ -63,7 +63,7 @@ ruby2shell playbook
 
 ## Demo
 
-The GIF below is a real transcript (see `demo/transcript.txt`): scan a seeded fixture fleet, check the vulnerable install, config-scan the Rails app, read the playbook, then check the fixed install. Fixture installs print recorded `-v` outputs from `examples/`; the 3.4.12 text is recorded from a real Ruby 3.4.12 built from source on 20/11/2026, the rest are representative format with version numbers from the advisory.
+The GIF below is a real transcript (see `demo/transcript.txt`): scan a seeded fixture fleet, check the vulnerable install, config-scan the Rails app, read the playbook, then check the fixed install. The demo GIF is 588 frames, 29.4 s. Fixture installs print recorded `-v` outputs from `examples/`; the 3.4.12 text is recorded from a real Ruby 3.4.12 built from source on 20/11/2026, the rest are representative format with version numbers from the advisory.
 
 ![demo](demo/ruby2shell-demo.gif)
 
@@ -92,7 +92,7 @@ Exposure needs the version AND the framework condition together:
 
 Fixed builds (checked 20/11/2026): Ruby 4.0.10, 3.4.13, 3.3.14. Affected: 4.0.0-4.0.9, 3.4.0-3.4.12, 3.3.13 and earlier (back to 2.4.0). Ruby 3.2 and earlier are end of life with no fix. The branch trap: 3.4.13 is fixed but 3.3.13 is still vulnerable - this tool compares against explicit per-branch ranges, never a plain numeric threshold.
 
-Self-hosted products (Veria Labs status table, updated 20/11/2026 06:30 UTC): GitLab fixed in 19.6.1 / 19.5.8 / 19.4.10; Mastodon fixed in 4.7.6 / 4.6.12 / 4.5.22 / 4.4.29; OpenProject fixed in 17.9.8 / 17.8.3; Discourse base image fixed in 2.0.20261119-0203. GitHub Enterprise Server (3.22.5 and earlier) and Chatwoot (4.20.0 and earlier) had no fixed release yet on 20/11/2026.
+Self-hosted products (Veria Labs status table, updated 20/11/2026 11:58 UTC): GitLab fixed in 19.6.1 / 19.5.8 / 19.4.10; Mastodon fixed in 4.7.6 / 4.6.12 / 4.5.22 / 4.4.29; OpenProject fixed in 17.9.8 / 17.8.3; Discourse base image fixed in 2.0.20261119-0203; Chatwoot fixed in 4.20.1. GitHub Enterprise Server (3.22.5 and earlier) still had no fixed release yet on 20/11/2026.
 
 Scores, both of them: Ruby rates the flaw Critical and publishes no CVSS of its own; MITRE CNA CVSS 3.1 is 7.4 High (vector CVSS:3.1/AV:L/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H). NVD assessment was not yet provided on 20/11/2026.
 
@@ -110,7 +110,7 @@ Gate on exit code: 0 passes, 1 fails the build (an install is EXPOSED or AT-RISK
 - It checks exactly one CVE (CVE-2026-132825). The other six flaws from the same 18/11/2026 release are listed by `explain siblings` as a checklist, not as verdicts.
 - Framework detection reads config files, not a running process: if the Gemfile.lock or config.ru on disk is not the one serving traffic, the verdict follows the wrong app. The evidence paths are printed in every output.
 - Distro Ruby builds (e.g. `3.3.0-1ubuntu`) are UNKNOWN: the distro may have backported the fix. Confirm in the distro advisory.
-- Vendor product versions are pinned to the Veria Labs status table of 20/11/2026. GitHub Enterprise Server and Chatwoot had no fix yet then; check the vendor before assuming a newer release is patched.
+- Vendor product versions are pinned to the Veria Labs status table of 20/11/2026 (re-checked 12:05 UTC). Chatwoot fixed in 4.20.1; GitHub Enterprise Server still had no fix yet then; check the vendor before assuming a newer release is patched.
 - No exploitation in the wild was reported as of 20/11/2026, and the CVE was not in the CISA KEV catalog as of the 2026-11-18 catalog version. Veria Labs publishes a proof of concept demonstrating RCE on stock Rails on 25/11/2026 (or later if major vendors have not shipped a fix). Patch before then.
 - Name neighbours: `Mahgal/ruby2shell-check` is a same-concept Python checker (shipped 20/11/2026, hours before this tool); `scadastrangelove/ruby2shell` ships Suricata / ModSecurity rules for the same CVE; `evenomn/CVE-2026-132825` is a PoC repository. Different owners, different products - this repo is the installable TypeScript CLI.
 

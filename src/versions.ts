@@ -17,7 +17,7 @@
  * Sources (checked 2026-11-20): Ruby security advisory,
  * ruby-lang.org/en/news/2026/11/18/multiple-vulnerabilities-in-regexp-and-string/;
  * Veria Labs, verialabs.com/ruby2shell/ (status table updated
- * 2026-11-20 06:30 UTC); NVD, CVE-2026-132825.
+ * 2026-11-20 11:58 UTC); NVD, CVE-2026-132825.
  */
 import { CVE_ID, GHSA_ID } from "./cli-version.js";
 

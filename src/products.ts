@@ -3,13 +3,13 @@
  * fixed releases per vendor. The fix has to come from the vendor:
  * upgrading Ruby alone does not fix these products.
  *
- * Table source (checked 2026-11-20): Veria Labs,
- * verialabs.com/ruby2shell/, status table updated 2026-11-20
- * 06:30 UTC. GitLab 19.6.1 / 19.5.8 / 19.4.10, Mastodon 4.7.6 /
+ * Table source: Veria Labs, verialabs.com/ruby2shell/,
+ * status table updated 2026-11-20 11:58 UTC, re-checked
+ * 2026-11-20 12:05 UTC (19:05 ICT). GitLab 19.6.1 / 19.5.8 / 19.4.10, Mastodon 4.7.6 /
  * 4.6.12 / 4.5.22 / 4.4.29, OpenProject 17.9.8 / 17.8.3 and the
  * Discourse base image 2.0.20261119-0203 were already shipping
- * the fixed Ruby on 20/11/2026. GitHub Enterprise Server and
- * Chatwoot had no fixed release yet on 20/11/2026.
+ * the fixed Ruby on 20/11/2026. GitHub Enterprise Server still
+ * had no fixed release yet; Chatwoot fixed in 4.20.1.
  */
 
 export interface ProductCheck {
@@ -60,7 +60,7 @@ const PRODUCTS: ProductEntry[] = [
     name: "chatwoot",
     aliases: ["chatwoot"],
     affectedThrough: "4.20.0",
-    fixedBranches: [],
+    fixedBranches: [{ branch: "4.20", fixed: "4.20.1" }],
     newerThanFixedIsPatched: false,
     displayName: "Chatwoot",
   },
@@ -175,7 +175,7 @@ export function checkProduct(name: string, version: string): ProductCheck {
   }
   // Newer than every known fixed branch: a later release contains
   // the fix (only claimed for products whose vendor ships fixed
-  // releases; GHES/Chatwoot have none yet, so this never fires).
+  // releases; GHES has none yet, so this never fires for it).
   const highestFixed =
     entry.fixedBranches.length > 0
       ? entry.fixedBranches

@@ -32,8 +32,8 @@ export const PLAYBOOK_STEPS: PlaybookStep[] = [
     title: "3. Self-hosted products: install the vendor fixed release",
     detail:
       "GitLab 19.6.1 / 19.5.8 / 19.4.10, Mastodon 4.7.6 (also 4.6.12, 4.5.22, 4.4.29), OpenProject 17.9.8 (also 17.8.3), " +
-      "Discourse base image 2.0.20261119-0203. GitHub Enterprise Server (3.22.5 and earlier) and Chatwoot (4.20.0 and " +
-      "earlier) had no fixed release yet on 20/11/2026 - watch the vendor and treat those installs as exposed. " +
+      "Discourse base image 2.0.20261119-0203. Chatwoot fixed in 4.20.1. GitHub Enterprise Server (3.22.5 and " +
+      "earlier) still had no fixed release yet on 20/11/2026 - watch the vendor and treat those installs as exposed. " +
       "Check with: ruby2shell check --product gitlab --product-version 19.6.0",
   },
   {
@@ -144,9 +144,9 @@ export const EXPLAIN_TOPICS: Record<string, string> = {
   ].join("\n"),
   products: [
     "Self-hosted products bundle their own Ruby, so the fix must come from the vendor (Veria Labs status table,",
-    "updated 20/11/2026 06:30 UTC). Patched: GitLab 19.6.1 / 19.5.8 / 19.4.10, Mastodon 4.7.6 / 4.6.12 / 4.5.22 /",
-    "4.4.29, OpenProject 17.9.8 / 17.8.3, Discourse base image 2.0.20261119-0203. No fix yet: GitHub Enterprise",
-    "Server 3.22.5 and earlier, Chatwoot 4.20.0 and earlier. Check with: ruby2shell check --product gitlab",
+    "updated 20/11/2026 11:58 UTC). Patched: GitLab 19.6.1 / 19.5.8 / 19.4.10, Mastodon 4.7.6 / 4.6.12 / 4.5.22 /",
+    "4.4.29, OpenProject 17.9.8 / 17.8.3, Discourse base image 2.0.20261119-0203, Chatwoot 4.20.1. No fix yet: GitHub Enterprise",
+    "Server 3.22.5 and earlier. Check with: ruby2shell check --product gitlab",
     "--product-version 19.6.0",
     `Source: Veria Labs verialabs.com/ruby2shell/. Checked ${CHECKED_AT}.`,
   ].join("\n"),

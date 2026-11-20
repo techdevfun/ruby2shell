@@ -238,13 +238,21 @@ test("product versions: GitLab fixed branches", () => {
   assert.equal(checkProduct("gitlab", "19.3.0").status, "vulnerable");
 });
 
-test("product versions: GHES and Chatwoot have no fix yet", () => {
+test("product versions: GHES has no fix yet", () => {
   const ghes = checkProduct("ghes", "3.22.5");
   assert.equal(ghes.status, "vulnerable");
   assert.equal(ghes.fixedVersions.length, 0);
   assert.match(ghes.reason, /no fixed release/);
   assert.equal(checkProduct("ghes", "3.22.6").status, "unknown");
-  assert.equal(checkProduct("chatwoot", "4.20.0").status, "vulnerable");
+});
+
+test("product versions: chatwoot 4.20.0 affected, 4.20.1 fixed", () => {
+  const affected = checkProduct("chatwoot", "4.20.0");
+  assert.equal(affected.status, "vulnerable");
+  assert.deepEqual(affected.fixedVersions, ["4.20.1"]);
+  assert.match(affected.reason, /4\.20\.1/);
+  assert.equal(checkProduct("chatwoot", "4.20.1").status, "patched");
+  assert.equal(checkProduct("chatwoot", "4.20.2").status, "patched");
   assert.equal(checkProduct("chatwoot", "4.21.0").status, "unknown");
 });
 
